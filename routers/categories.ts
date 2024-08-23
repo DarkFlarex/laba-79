@@ -59,4 +59,19 @@ categoriesRouter.post('/', async (req, res) => {
     return res.send(categories[0]);
 });
 
+categoriesRouter.delete('/:id', async (req, res) => {
+    const id = req.params.id;
+    const [deleteResult] = await mysqlDB.getConnection().query(
+        'DELETE FROM categories WHERE id = ?',
+        [id]
+    );
+    const resultHeader = deleteResult as ResultSetHeader;
+    if (resultHeader.affectedRows === 0) {
+        return res.status(404).send({ error: 'Category not found or deleted' });
+    }
+
+    return res.send({ message: 'Category deleted' });
+
+});
+
 export default categoriesRouter;
